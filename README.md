@@ -8,6 +8,64 @@
 
 ---
 
+## 📱 Taller 1 – Flutter + Widgets + Git Flow
+> **Implementación práctica de StatefulWidget, reactividad con setState(), layouts con imágenes híbridas y gestión de control de versiones con Git Flow.**
+
+### 👤 Datos del Estudiante
+- **Nombre Completo:** Samuel Alejandro Rincon Serna
+- **Código Estudiantil:** 230231045
+- **Institución:** Unidad Central del Valle del Cauca (UCEVA) — Tuluá, Valle
+- **Asignatura:** Electiva Profesional 1 Móviles (Ingeniería de Sistemas)
+- **Repositorio:** [https://github.com/Sarincon508/flowbiz](https://github.com/Sarincon508/flowbiz)
+- **Rama del Taller:** `feature/taller1` (integrada hacia `dev` y luego hacia `main`)
+
+---
+
+### 🚀 Instrucciones de Ejecución
+Para clonar, preparar y ejecutar este proyecto en tu emulador o dispositivo físico Android:
+
+```bash
+# 1. Clonar el repositorio
+git clone https://github.com/Sarincon508/flowbiz.git
+cd flowbiz
+
+# 2. Cambiar a la rama de desarrollo o del taller
+git checkout dev
+
+# 3. Descargar dependencias de Flutter
+flutter pub get
+
+# 4. Verificar dispositivos/emuladores activos
+flutter devices
+
+# 5. Ejecutar la aplicación en el emulador Android
+flutter run
+```
+
+---
+
+### 📸 Evidencias Visuales de la Aplicación en Emulador
+
+| 1. Estado Inicial (`Hola, Flutter`) | 2. Estado Interactivo (`¡Título cambiado!` + SnackBar) | 3. Widgets Adicionales (Stack & ListView) |
+| :---: | :---: | :---: |
+| ![Estado Inicial](docs/screenshots/01_estado_inicial.png) | ![Estado Interactivo](docs/screenshots/02_titulo_cambiado_snackbar.png) | ![Widgets Adicionales](docs/screenshots/03_widgets_adicionales_scroll.png) |
+
+---
+
+### 🧩 Resumen Técnico de Widgets Implementados
+1. **StatefulWidget & setState():** Control reactivo del título del `AppBar` (`_tituloAppBar`), alternando entre `"Hola, Flutter"` y `"¡Título cambiado!"` mediante un botón `ElevatedButton`.
+2. **SnackBar Flotante:** Notificación en tiempo real (`ScaffoldMessenger.of(context).showSnackBar()`) con el mensaje `"Título actualizado"`.
+3. **Galería de Imágenes en Row:**
+   - `Image.network()`: Carga remota asíncrona con indicadores de progreso y manejo de excepciones con fallback.
+   - `Image.asset()`: Renderizado de recurso local empaquetado (`assets/images/flutter_taller.png`).
+4. **Widgets Adicionales:**
+   - **`Container` decorativo:** Gradiente institucional UCEVA Navy (`#1B365D`), bordes redondeados (`BorderRadius.circular(16)`), sombras de elevación y badge del estudiante centrado.
+   - **`Stack` interactivo:** Superposición multicapa de marcas de agua dinámicas, etiquetas flotantes y texto en tiempo real que refleja el estado de la variable `_tituloAppBar`.
+   - **`ListView` con `ListTile`:** Lista estructurada de 4 módulos y competencias técnicas con iconos personalizados y tipografía jerárquica.
+   - **`OutlinedButton`:** Acción secundaria para restablecer el estado inicial a valores por defecto.
+
+---
+
 ## 📌 1. Descripción del Proyecto
 
 **FlowBiz** es una solución móvil de gestión operativa y financiera concebida para cerrar la brecha entre el agendamiento de citas, el punto de venta (POS) y la auditoría contable en micro y pequeños comercios de servicios (barberías, estéticas, spas, consultorios médicos, restaurantes pequeños y talleres).
