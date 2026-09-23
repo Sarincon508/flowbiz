@@ -1,15 +1,11 @@
 import 'package:flutter/material.dart';
-import '../providers/flowbiz_controller.dart';
-import 'home_screen.dart';
 
 /// Pantalla Principal para Taller 1: Flutter + Widgets + Git Flow
 /// Estudiante: Samuel Alejandro Rincon Serna
 /// Código: 230231045
 /// Asignatura: Electiva Profesional 1 Móviles
 class HomePage extends StatefulWidget {
-  final FlowBizController? controller;
-
-  const HomePage({super.key, this.controller});
+  const HomePage({super.key});
 
   @override
   State<HomePage> createState() => _HomePageState();
@@ -89,21 +85,6 @@ class _HomePageState extends State<HomePage> {
         backgroundColor: const Color(0xFF1B365D),
         foregroundColor: Colors.white,
         elevation: 3,
-        actions: [
-          if (widget.controller != null)
-            IconButton(
-              tooltip: 'Abrir Sistema FlowBiz',
-              icon: const Icon(Icons.storefront_outlined),
-              onPressed: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) => HomeScreen(controller: widget.controller!),
-                  ),
-                );
-              },
-            ),
-        ],
       ),
       body: SingleChildScrollView(
         child: Padding(
@@ -255,7 +236,6 @@ class _HomePageState extends State<HomePage> {
                                   );
                                 },
                                 errorBuilder: (context, error, stackTrace) {
-                                  // Fallback seguro si la red no está disponible
                                   return Container(
                                     color: const Color(0xFFE2E8F0),
                                     child: const Center(
@@ -283,7 +263,7 @@ class _HomePageState extends State<HomePage> {
                             ),
                           ),
                           const Text(
-                            'Flutter Logo CDN',
+                            'Flutter CDN (Remoto)',
                             style: TextStyle(fontSize: 9, color: Colors.grey),
                           ),
                         ],
@@ -346,7 +326,7 @@ class _HomePageState extends State<HomePage> {
                             ),
                           ),
                           const Text(
-                            'assets/images/...',
+                            'assets/images/ (Local)',
                             style: TextStyle(fontSize: 9, color: Colors.grey),
                           ),
                         ],
@@ -392,7 +372,7 @@ class _HomePageState extends State<HomePage> {
               // WIDGET ADICIONAL 2: Stack (Superponer texto sobre una imagen)
               // ---------------------------------------------------------------
               const Text(
-                'Widget Adicional: Stack (Superposición de Texto y Gráficos)',
+                'Widget Adicional: Stack (Superposición de Texto sobre Imagen)',
                 style: TextStyle(
                   fontSize: 15,
                   fontWeight: FontWeight.bold,
@@ -404,29 +384,36 @@ class _HomePageState extends State<HomePage> {
               ClipRRect(
                 borderRadius: BorderRadius.circular(14),
                 child: SizedBox(
-                  height: 120,
+                  height: 130,
                   width: double.infinity,
                   child: Stack(
                     fit: StackFit.expand,
                     children: [
-                      // Fondo de la tarjeta en Stack
+                      // Imagen de fondo del Stack
+                      Image.asset(
+                        'assets/images/flowbiz_banner.jpg',
+                        fit: BoxFit.cover,
+                        errorBuilder: (context, error, stackTrace) {
+                          return Container(
+                            decoration: const BoxDecoration(
+                              gradient: LinearGradient(
+                                colors: [Color(0xFF0F172A), Color(0xFF334155)],
+                              ),
+                            ),
+                          );
+                        },
+                      ),
+
+                      // Capa semitransparente para legibilidad de textos
                       Container(
-                        decoration: const BoxDecoration(
+                        decoration: BoxDecoration(
                           gradient: LinearGradient(
-                            colors: [Color(0xFF0F172A), Color(0xFF334155)],
+                            colors: [
+                              Colors.black.withValues(alpha: 0.75),
+                              Colors.black.withValues(alpha: 0.35),
+                            ],
                             begin: Alignment.centerLeft,
                             end: Alignment.centerRight,
-                          ),
-                        ),
-                        child: Align(
-                          alignment: Alignment.centerRight,
-                          child: Padding(
-                            padding: const EdgeInsets.only(right: 20.0),
-                            child: Icon(
-                              Icons.flutter_dash_rounded,
-                              size: 90,
-                              color: Colors.white.withValues(alpha: 0.12),
-                            ),
                           ),
                         ),
                       ),
@@ -442,7 +429,7 @@ class _HomePageState extends State<HomePage> {
                             borderRadius: BorderRadius.circular(8),
                           ),
                           child: const Text(
-                            'MODO REACTIVO ACTIVO',
+                            'STACK • TEXTO SUPERPUESTO SOBRE IMAGEN',
                             style: TextStyle(
                               color: Color(0xFF0F172A),
                               fontSize: 10,
@@ -453,7 +440,7 @@ class _HomePageState extends State<HomePage> {
                         ),
                       ),
 
-                      // Texto principal superpuesto en la parte inferior
+                      // Texto principal superpuesto en la parte inferior con estado dinámico
                       Positioned(
                         bottom: 14,
                         left: 16,
@@ -461,13 +448,13 @@ class _HomePageState extends State<HomePage> {
                         child: Row(
                           children: [
                             const Icon(Icons.bolt, color: Colors.amberAccent, size: 20),
-                            const SizedBox(width: 6),
+                            const SizedBox(width: 8),
                             Expanded(
                               child: Text(
-                                'Título actual: "$_tituloAppBar"',
+                                'Estado Actual: "$_tituloAppBar"',
                                 style: const TextStyle(
                                   color: Colors.white,
-                                  fontSize: 14,
+                                  fontSize: 15,
                                   fontWeight: FontWeight.bold,
                                 ),
                               ),
@@ -547,52 +534,22 @@ class _HomePageState extends State<HomePage> {
               const SizedBox(height: 22),
 
               // ---------------------------------------------------------------
-              // WIDGET ADICIONAL 4: OutlinedButton / Acciones Secundarias
+              // WIDGET ADICIONAL 4: OutlinedButton / Acción Secundaria
               // ---------------------------------------------------------------
-              Row(
-                children: [
-                  Expanded(
-                    child: OutlinedButton.icon(
-                      icon: const Icon(Icons.restart_alt_rounded, size: 18),
-                      label: const Text('Reiniciar Estado'),
-                      style: OutlinedButton.styleFrom(
-                        foregroundColor: const Color(0xFF1B365D),
-                        side: const BorderSide(color: Color(0xFF1B365D), width: 1.5),
-                        padding: const EdgeInsets.symmetric(vertical: 12),
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(10),
-                        ),
-                      ),
-                      onPressed: _reiniciarEstado,
-                    ),
+              OutlinedButton.icon(
+                icon: const Icon(Icons.restart_alt_rounded, size: 20),
+                label: const Text('Restablecer Estado Inicial'),
+                style: OutlinedButton.styleFrom(
+                  foregroundColor: const Color(0xFF1B365D),
+                  side: const BorderSide(color: Color(0xFF1B365D), width: 1.5),
+                  padding: const EdgeInsets.symmetric(vertical: 14),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(10),
                   ),
-                  if (widget.controller != null) ...[
-                    const SizedBox(width: 12),
-                    Expanded(
-                      child: ElevatedButton.icon(
-                        icon: const Icon(Icons.arrow_forward_rounded, size: 18),
-                        label: const Text('Ir a FlowBiz App'),
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: const Color(0xFF1B365D),
-                          foregroundColor: Colors.white,
-                          padding: const EdgeInsets.symmetric(vertical: 12),
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(10),
-                          ),
-                        ),
-                        onPressed: () {
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                              builder: (context) => HomeScreen(controller: widget.controller!),
-                            ),
-                          );
-                        },
-                      ),
-                    ),
-                  ],
-                ],
+                ),
+                onPressed: _reiniciarEstado,
               ),
+
               const SizedBox(height: 16),
             ],
           ),

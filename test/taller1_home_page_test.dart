@@ -19,7 +19,7 @@ void main() {
     expect(find.text('Código: 230231045'), findsOneWidget);
 
     // 3. Verify presence of Image.network and Image.asset widgets
-    expect(find.byType(Image), findsNWidgets(2));
+    expect(find.byType(Image), findsAtLeast(2));
 
     // 4. Verify presence of Container, Stack, and ListView
     expect(find.byType(Container), findsWidgets);

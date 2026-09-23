@@ -317,18 +317,18 @@ def build_taller1_pdf():
     ))
     story.append(Spacer(1, 4))
 
-    img3_path = os.path.join(screenshots_dir, "04_widgets_adicionales_scroll.png")
+    img3_path = os.path.join(screenshots_dir, "03_widgets_adicionales_scroll.png")
 
     w_desc_text = (
         "<b>1. Container Estilizado:</b> Encabeza la interfaz con gradiente azul institucional UCEVA Navy (#1B365D a #0284C7), "
         "bordes redondeados (16px), sombras gaussianas de elevación, divisor interior y presentación centrada de los datos del estudiante.<br/><br/>"
-        "<b>2. Stack (Superposición Gráfica Reactiva):</b> Superpone sobre un fondo de alta densidad con gradiente oscuro una marca de agua "
-        "del icono oficial de Flutter Dash, una etiqueta de estatus en esquina superior izquierda, y texto dinámico en la parte inferior "
-        "que muta de forma inmediata al cambiar el título con setState().<br/><br/>"
+        "<b>2. Stack (Superposición de Texto sobre Imagen):</b> Superpone sobre una imagen de fondo con filtro semitransparente "
+        "una etiqueta superior ('STACK • TEXTO SUPERPUESTO SOBRE IMAGEN') y texto dinámico en la parte inferior "
+        "que muta de forma inmediata al cambiar el título con setState(). Cumple fielmente con el requerimiento de la guía.<br/><br/>"
         "<b>3. ListView con ListTile:</b> Lista estructurada de 4 tarjetas informativas con scroll controlado, presentando las competencias "
         "del taller, cada una con icono distintivo en contenedor cromático, título jerárquico y descripción detallada.<br/><br/>"
-        "<b>4. OutlinedButton & ElevatedButton:</b> Botones de acción secundaria para restablecer el estado inicial a valores por defecto "
-        "y navegación directa al flujo completo del aplicativo FlowBiz."
+        "<b>4. OutlinedButton:</b> Botón de acción secundaria con icono de reinicio para restablecer de inmediato el estado inicial "
+        "a valores por defecto ('Hola, Flutter', interacciones: 0) acompañado de un SnackBar informativo."
     )
 
     widgets_table_data = [

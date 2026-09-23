@@ -1,34 +1,25 @@
 import 'package:flutter/material.dart';
-import 'providers/flowbiz_controller.dart';
 import 'screens/taller1_home_page.dart';
-import 'services/storage_service.dart';
 
-import 'theme/app_theme.dart';
-
-void main() async {
+void main() {
   WidgetsFlutterBinding.ensureInitialized();
-
-  final storageService = await StorageService.init();
-  final controller = FlowBizController(storageService);
-
-  runApp(FlowBizApp(controller: controller));
+  runApp(const Taller1App());
 }
 
-class FlowBizApp extends StatelessWidget {
-  final FlowBizController controller;
-
-  const FlowBizApp({super.key, required this.controller});
+class Taller1App extends StatelessWidget {
+  const Taller1App({super.key});
 
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
       title: 'Taller 1 - Flutter + Widgets + Git Flow',
       debugShowCheckedModeBanner: false,
-      theme: AppTheme.lightTheme,
-      darkTheme: AppTheme.darkTheme,
-      themeMode: ThemeMode.light,
-      home: HomePage(controller: controller),
+      theme: ThemeData(
+        colorScheme: ColorScheme.fromSeed(seedColor: const Color(0xFF1B365D)),
+        useMaterial3: true,
+        scaffoldBackgroundColor: const Color(0xFFF8FAFC),
+      ),
+      home: const HomePage(),
     );
   }
 }
-
