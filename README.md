@@ -48,7 +48,7 @@ flutter run
 
 | 1. Estado Inicial (`Hola, Flutter`) | 2. Estado Interactivo (`¡Título cambiado!` + SnackBar) | 3. Widgets Adicionales (Stack & ListView) |
 | :---: | :---: | :---: |
-| ![Estado Inicial](docs/screenshots/01_estado_inicial.png) | ![Estado Interactivo](docs/screenshots/02_titulo_cambiado_snackbar.png) | ![Widgets Adicionales](docs/screenshots/04_widgets_adicionales_scroll.png) |
+| ![Estado Inicial](docs/screenshots/01_estado_inicial.png) | ![Estado Interactivo](docs/screenshots/02_titulo_cambiado_snackbar.png) | ![Widgets Adicionales](docs/screenshots/03_widgets_adicionales_scroll.png) |
 
 ---
 
