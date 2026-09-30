@@ -8,6 +8,144 @@
 
 ---
 
+## ⚡ Taller 2 – Asincronía y Procesamiento en Segundo Plano (Future, Timer, Isolate)
+> **Implementación práctica y rigurosa de concurrencia en Flutter: Peticiones asíncronas I/O con Future y async/await, temporización periódica de precisión con Timer, y aislamiento de tareas pesadas CPU-bound con Isolate.spawn.**
+
+### 👤 Datos del Estudiante y Entrega
+- **Nombre Completo:** Samuel Alejandro Rincon Serna
+- **Código Estudiantil:** 230231045
+- **Institución:** Unidad Central del Valle del Cauca (UCEVA) — Tuluá, Valle
+- **Asignatura:** Electiva Profesional 1 Móviles (Ingeniería de Sistemas)
+- **Repositorio Oficial:** [https://github.com/Sarincon508/flowbiz](https://github.com/Sarincon508/flowbiz)
+- **Ramas GitFlow:** `feature/taller_segundo_plano` ➔ Pull Request a `dev` ➔ Fusión a `main`
+- **Documento PDF de Evidencias:** [Taller_Segundo_Plano_SamuelRincon.pdf](docs/Taller_Segundo_Plano_SamuelRincon.pdf) (Ubicado en Escritorio F: y en `docs/`)
+
+---
+
+### 📚 1. Cuándo Usar Future, async/await, Timer e Isolate en Flutter
+
+Dart opera bajo un modelo de **Event Loop mono-hilo** (Single Threaded Event Loop). Comprender qué mecanismo aplicar según el tipo de carga computacional es vital para garantizar una tasa constante de 60/120 FPS sin congelamientos:
+
+| Mecanismo | Naturaleza de la Carga | ¿Crea un Hilo Nuevo? | Cuándo Debe Utilizarse en Flutter |
+| :--- | :--- | :---: | :--- |
+| **`Future` & `async`/`await`** | **I/O-Bound** (Red, Disco, DB) | **No** (Espera no bloqueante en el mismo hilo) | Ideal para operaciones donde el procesador local espera una respuesta externa: consultas a APIs REST, peticiones HTTP, lecturas en SQLite/SharedPreferences y delays temporizados. Permite que el Event Loop continúe atendiendo gestos y animaciones. |
+| **`Timer` & `Timer.periodic`** | **Temporización Programada** | **No** (Encola eventos en el Event Loop tras un delay) | Cronómetros, cuentas regresivas, debouncing de inputs de búsqueda, polling periódico a servidores y animaciones secuenciales. **Regla de oro:** Debe cancelarse siempre con `_timer?.cancel()` al pausar y en el método `dispose()` para evitar fugas de memoria. |
+| **`Isolate` (`Isolate.spawn`)** | **CPU-Bound** (Cómputo Intensivo) | **Sí** (Crea un hilo nativo del SO con su propio Heap de memoria) | Procesamiento/compresión de imágenes y video, algoritmos criptográficos, parseo masivo de JSON (>5MB) o cálculos matemáticos complejos (>16 ms). Al ejecutarse en un espacio de memoria aislado, se comunica exclusivamente por paso de mensajes (`SendPort` / `ReceivePort`). |
+
+---
+
+### 🗺️ 2. Diagrama de Arquitectura y Flujos de Ejecución
+
+```mermaid
+flowchart TD
+    subgraph UI_Thread ["🧵 Hilo Principal de Flutter (Main Thread / Event Loop)"]
+        A["📱 Usuario Interactúa en UI"] --> B{"Selección de Módulo"}
+        
+        %% Flujo 1: Timer
+        B -->|Módulo 1: Timer| C1["⏱️ Iniciar Timer.periodic(100ms)"]
+        C1 --> C2["Refresco reactivo de dígitos en pantalla"]
+        C2 --> C3["⏸️ Pausar: _timer.cancel() / Tiempo retenido"]
+        C3 --> C4["↺ Reiniciar / Historial de Vueltas"]
+        C2 --> C5["🧹 dispose(): Liberación estricta de memoria"]
+
+        %% Flujo 2: Future & Async
+        B -->|Módulo 2: Future| D1["⚡ Invocación con async/await"]
+        D1 --> D2["1. [ANTES] Impreso en Consola"]
+        D2 --> D3["⏳ Estado Cargando... + Spinner activo"]
+        D3 --> D4["2. [DURANTE] Future.delayed(2.5s)"]
+        D4 --> D5["🖱️ UI 100% Viva (Clicks interactivos sin bloqueo)"]
+        D5 --> D6{"¿Simular Error?"}
+        D6 -->|No| D7["3. [DESPUÉS - ÉXITO] Datos FlowBiz HTTP 200"]
+        D6 -->|Sí| D8["3. [DESPUÉS - ERROR] Captura en bloque catch (e)"]
+
+        %% Flujo 3: Isolate.spawn
+        B -->|Módulo 3: Isolate| E1["🧠 Iniciar Cómputo CPU-Bound (30M ops)"]
+        E1 --> E2["Creación de ReceivePort y SendPort"]
+        E2 --> E3["🚀 Isolate.spawn() a hilo secundario"]
+        E3 --> E4["Monitor UI: Engranaje gira a 60 FPS sin tirones"]
+        E5["📥 Mensajes recibidos en ReceivePort"] --> E6["Actualización de barra de progreso (25%, 50%, 75%, 100%)"]
+        E6 --> E7["🏁 Resultado recibido: Suma BigInt + Primos + Tiempo en ms"]
+        E7 --> E8["🔒 Cierre de puertos y liberación del Isolate"]
+    end
+
+    subgraph Secondary_Isolate ["⚙️ Hilo Secundario Nativo (Worker Isolate - Heap Separado)"]
+        E3 -.->|Spawn con SendPort| W1["Punto de Entrada: _heavyComputationWorker"]
+        W1 --> W2["Bucle Intensivo de 30,000,000 iteraciones"]
+        W2 --> W3["Cálculo de Sumatoria Ponderada + Primos"]
+        W3 -.->|Reporte de Progreso| E5
+        W3 --> W4["Finalización en cronómetro interno"]
+        W4 -.->|Envío de resultado final vía SendPort| E5
+    end
+```
+
+---
+
+### 📸 3. Evidencias Visuales del Taller 2 en Emulador Android
+
+#### Módulo 1: Cronómetro & Cuenta Regresiva (Timer)
+| 1. Iniciar (En Ejecución) | 2. Pausar + Vueltas | 3. Reiniciar (En Reposo) | 4. Cuenta Regresiva (30s) |
+| :---: | :---: | :---: | :---: |
+| ![Cronómetro Iniciar](docs/screenshots_taller2/01_cronometro_iniciar.png) | ![Cronómetro Pausar](docs/screenshots_taller2/02_cronometro_pausar_vueltas.png) | ![Cronómetro Reiniciar](docs/screenshots_taller2/03_cronometro_reiniciar.png) | ![Cuenta Regresiva](docs/screenshots_taller2/04_cuenta_regresiva.png) |
+| *Display LED activo, ticks cada 100ms* | *Timer.cancel() ejecutado, 3 vueltas registradas* | *Acumuladores reseteados a 00:00.0* | *Temporizador regresivo con alerta final* |
+
+#### Módulo 2: Asincronía con Future y async/await
+| 5. Estado Cargando (UI Viva) | 6. Estado Éxito (HTTP 200) | 7. Estado Error (try / catch) |
+| :---: | :---: | :---: |
+| ![Future Cargando](docs/screenshots_taller2/05_future_cargando.png) | ![Future Éxito](docs/screenshots_taller2/06_future_exito.png) | ![Future Error](docs/screenshots_taller2/07_future_error.png) |
+| *CircularProgressIndicator + 8 clicks interactivos* | *Datos de FlowBiz recibidos en 2,514 ms* | *Excepción 503 controlada con reintento* |
+
+#### Módulo 3: Procesamiento Pesado CPU-Bound con Isolate.spawn
+| 8. Isolate en Proceso (Progreso 50%) | 9. Resultado Computado por el Isolate | 10. Consola del Sistema Completa |
+| :---: | :---: | :---: |
+| ![Isolate Progreso](docs/screenshots_taller2/08_isolate_en_proceso.png) | ![Isolate Resultado](docs/screenshots_taller2/09_isolate_resultado.png) | ![Consola Completa](docs/screenshots_taller2/10_consola_mensajes_completos.png) |
+| *30M de operaciones en hilo separado, UI a 60 FPS* | *Suma BigInt, 13,848 primos en 1,782 ms* | *Trazas inter-hilos y orden 1-Antes, 2-Durante, 3-Después* |
+
+---
+
+### 💻 4. Verificación de la Salida en Consola (Orden de Ejecución)
+
+```bash
+# ==============================================================================
+# SECCIÓN 1: SECUENCIA DE ASINCRONÍA (FUTURE / ASYNC / AWAIT)
+# ==============================================================================
+[ASYNC-ORDER] 1. [ANTES]: Invocando fetchReportData(). La UI permanece libre e interactiva (Event Loop no bloqueado).
+[ASYNC-ORDER] 2. [DURANTE]: Esperando respuesta del servidor simulado mediante Future.delayed(2500 ms)...
+[ASYNC-UI-TEST] Usuario presiona botón reactivo mientras espera: 8 clicks registrados a 60 FPS sin lag.
+[ASYNC-ORDER] 3. [DESPUÉS - ÉXITO]: Respuesta recibida en 2514 ms. Datos parseados exitosamente. Actualizando estado en UI.
+
+# Caso de Simulación de Error con try / catch:
+[ASYNC-ORDER] 1. [ANTES]: Invocando fetchReportData(simulateError: true)...
+[ASYNC-ORDER] 2. [DURANTE]: Esperando respuesta del servidor simulado con Future.delayed(2500 ms)...
+[ASYNC-ORDER] 3. [DESPUÉS - ERROR]: Fallo capturado en bloque catch tras 2504 ms: Exception: Error 503 (Servicio no disponible).
+
+# ==============================================================================
+# SECCIÓN 2: CICLO DE VIDA DEL TIMER (CRONÓMETRO)
+# ==============================================================================
+[Timer] Timer iniciado a una frecuencia de 100ms. Estado: TimerStatus.running
+[Timer] Vuelta registrada #1: 00:06.3 (Total: 00:06.3)
+[Timer] Timer pausado. Tiempo retenido: 00:28.4 (Timer.cancel() ejecutado)
+[Timer] Timer reanudado desde: 00:28.4
+[Timer] Timer reiniciado a estado inicial. Acumuladores restablecidos a 0.
+
+# ==============================================================================
+# SECCIÓN 3: COMUNICACIÓN INTER-HILOS CON ISOLATE.SPAWN
+# ==============================================================================
+[ISOLATE-MAIN] 1. [Main Thread]: Creando ReceivePort para comunicación bidireccional.
+[ISOLATE-MAIN] 2. [Main Thread]: Invocando Isolate.spawn() para crear un nuevo hilo de ejecución independiente...
+[ISOLATE-MAIN] 3. [Main Thread]: Isolate creado y activo. La interfaz (UI) continúa corriendo a 60 FPS sin bloqueos.
+[ISOLATE-WORKER] 1. Hilo secundario Isolate iniciado con su propio espacio de memoria (Heap separado).
+[ISOLATE-WORKER] 2. Comenzando computación CPU-bound de 30,000,000 iteraciones (Sumatoria + Primos)...
+[ISOLATE-WORKER] Progreso de cómputo emitido: 25% (7,500,000/30,000,000 operaciones)
+[ISOLATE-WORKER] Progreso de cómputo emitido: 50% (15,000,000/30,000,000 operaciones)
+[ISOLATE-WORKER] Progreso de cómputo emitido: 75% (22,500,000/30,000,000 operaciones)
+[ISOLATE-WORKER] 3. Cómputo CPU finalizado en 1782 ms. Enviando resultado final al ReceivePort del hilo principal...
+[ISOLATE-MAIN] 4. [Main Thread]: Cómputo recibido satisfactoriamente (Suma: 450000015000000, Primos: 13848, Tiempo: 1782ms).
+[ISOLATE-MAIN] 5. Recursos de Isolate y ReceivePort liberados.
+[LIFECYCLE] Recursos de Timer e Isolate liberados exitosamente en dispose().
+```
+
+---
+
 ## 📱 Taller 1 – Flutter + Widgets + Git Flow
 > **Implementación práctica de StatefulWidget, reactividad con setState(), layouts con imágenes híbridas y gestión de control de versiones con Git Flow.**
 
