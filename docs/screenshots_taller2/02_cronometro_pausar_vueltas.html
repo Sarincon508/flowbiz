@@ -1,0 +1,333 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<style>
+  * {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  }
+  body {
+    background: #0f172a;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 10px;
+    height: 100vh;
+  }
+  .phone-frame {
+    width: 412px;
+    height: 890px;
+    background: #F8FAFC;
+    border-radius: 36px;
+    border: 9px solid #1e293b;
+    box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.7);
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    position: relative;
+  }
+  .status-bar {
+    height: 28px;
+    background: #1B365D;
+    color: white;
+    font-size: 11px;
+    font-weight: 600;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0 18px;
+  }
+  .app-bar {
+    background: #1B365D;
+    color: white;
+    padding: 8px 16px 10px 16px;
+  }
+  .app-title {
+    font-size: 16px;
+    font-weight: bold;
+    color: #ffffff;
+  }
+  .app-subtitle {
+    font-size: 10.5px;
+    color: rgba(255, 255, 255, 0.75);
+    margin-top: 1px;
+  }
+  .tab-bar {
+    display: flex;
+    background: #1B365D;
+    border-bottom: 2px solid #234375;
+    padding: 0 8px;
+  }
+  .tab {
+    padding: 8px 12px;
+    font-size: 11.5px;
+    font-weight: 600;
+    color: rgba(255, 255, 255, 0.65);
+    border-bottom: 3.5px solid transparent;
+  }
+  .tab-active {
+    color: #ffffff;
+    border-bottom: 3.5px solid #FCD34D;
+  }
+  .content {
+    flex: 1;
+    padding: 14px;
+    overflow-y: auto;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }
+  .card {
+    background: white;
+    border-radius: 12px;
+    border: 1px solid #E2E8F0;
+    padding: 12px 14px;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+  }
+  .card-banner {
+    background: #F1F5F9;
+    border: 1px solid #CBD5E1;
+    font-size: 11px;
+    color: #334155;
+    line-height: 1.4;
+    display: flex;
+    gap: 10px;
+    align-items: center;
+  }
+  .scoreboard {
+    background: linear-gradient(180deg, #0F172A 0%, #1E293B 100%);
+    border: 1.5px solid #334155;
+    border-radius: 18px;
+    padding: 22px 16px;
+    text-align: center;
+    color: white;
+    box-shadow: 0 8px 18px rgba(0,0,0,0.25);
+  }
+  .status-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 3px 12px;
+    border-radius: 20px;
+    font-size: 10px;
+    font-weight: bold;
+    letter-spacing: 1px;
+  }
+  .badge-running {
+    background: rgba(74, 222, 128, 0.15);
+    color: #4ADE80;
+    border: 1px solid #4ADE80;
+  }
+  .badge-paused {
+    background: rgba(251, 191, 36, 0.15);
+    color: #FBBF24;
+    border: 1px solid #FBBF24;
+  }
+  .badge-initial {
+    background: rgba(148, 163, 184, 0.15);
+    color: #94A3B8;
+    border: 1px solid #94A3B8;
+  }
+  .timer-digits {
+    font-family: "Courier New", Courier, monospace;
+    font-size: 46px;
+    font-weight: 900;
+    color: #38BDF8;
+    letter-spacing: 2px;
+    margin: 10px 0 4px 0;
+  }
+  .timer-sub {
+    font-size: 9.5px;
+    color: #94A3B8;
+    letter-spacing: 1.5px;
+    font-weight: 600;
+  }
+  .btn-group {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    justify-content: center;
+  }
+  .btn {
+    padding: 9px 15px;
+    border-radius: 8px;
+    font-size: 12px;
+    font-weight: bold;
+    border: none;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+  }
+  .btn-green { background: #16A34A; color: white; }
+  .btn-orange { background: #D97706; color: white; }
+  .btn-blue { background: #0284C7; color: white; }
+  .btn-outline-red {
+    background: transparent;
+    color: #DC2626;
+    border: 1.5px solid #DC2626;
+  }
+  .btn-ghost { background: transparent; color: #1B365D; border: 1px solid #CBD5E1; }
+  .btn-disabled { opacity: 0.45; cursor: not-allowed; }
+  .chip-group {
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+  }
+  .chip {
+    padding: 5px 12px;
+    border-radius: 16px;
+    font-size: 11px;
+    font-weight: 600;
+    border: 1px solid #CBD5E1;
+    background: #F1F5F9;
+    color: #334155;
+  }
+  .chip-active {
+    background: #1B365D;
+    color: white;
+    border-color: #1B365D;
+  }
+  .laps-container {
+    border: 1px solid #E2E8F0;
+    border-radius: 10px;
+    background: white;
+    max-height: 140px;
+    overflow-y: hidden;
+  }
+  .lap-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 7px 12px;
+    border-bottom: 1px solid #F1F5F9;
+    font-size: 11px;
+  }
+  .lap-num {
+    background: #1B365D;
+    color: white;
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 9.5px;
+    font-weight: bold;
+  }
+  .lap-time { font-family: monospace; font-weight: bold; }
+  .lap-total { color: #64748B; font-size: 10px; }
+  .terminal {
+    background: #0F172A;
+    border: 1px solid #334155;
+    border-radius: 10px;
+    padding: 10px 12px;
+    font-family: "Courier New", Courier, monospace;
+    font-size: 10px;
+    line-height: 1.45;
+  }
+  .term-yellow { color: #FBBF24; }
+  .term-purple { color: #C084FC; }
+  .term-green { color: #4ADE80; }
+  .term-red { color: #F87171; }
+  .term-blue { color: #38BDF8; }
+  .nav-bar {
+    height: 52px;
+    background: white;
+    border-top: 1px solid #E2E8F0;
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+    padding: 0 10px;
+  }
+  .nav-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 3px;
+    font-size: 10px;
+    font-weight: bold;
+    color: #64748B;
+  }
+  .nav-item-active {
+    color: #1B365D;
+  }
+</style>
+</head>
+<body>
+<div class="phone-frame">
+  <div class="status-bar">
+    <span>18:30</span>
+    <span>5G • 100% 🔋</span>
+  </div>
+  <div class="app-bar">
+    <div class="app-title">Taller: Segundo Plano en Flutter</div>
+    <div class="app-subtitle">Future • Timer • Isolate.spawn | Samuel Rincon (230231045)</div>
+  </div>
+  <div class="tab-bar">
+    <div class="tab tab-active">⏱️ 1. Timer</div><div class="tab ">⚡ 2. Future & Async</div><div class="tab ">🧠 3. Isolate.spawn</div>
+  </div>
+  <div class="content">
+    
+    <div class="card card-banner">
+      <span style="font-size: 18px;">ℹ️</span>
+      <div><b>Estado Pausado:</b> El <code>Timer.cancel()</code> detuvo la suscripción en el bucle de eventos, reteniendo el tiempo exacto.</div>
+    </div>
+    <div class="chip-group">
+      <div class="chip chip-active">⏱️ Cronómetro</div>
+      <div class="chip">⏳ Cuenta Regresiva (30s)</div>
+    </div>
+    <div class="scoreboard">
+      <div class="status-badge badge-paused">● PAUSADO</div>
+      <div class="timer-digits">00:28.4</div>
+      <div class="timer-sub">TIEMPO RETENIDO SATISFACTORIAMENTE</div>
+    </div>
+    <div class="btn-group">
+      <button class="btn btn-green btn-disabled">▶ Iniciar</button>
+      <button class="btn btn-orange btn-disabled">⏸ Pausar</button>
+      <button class="btn btn-blue">⏯ Reanudar</button>
+      <button class="btn btn-outline-red">↺ Reiniciar</button>
+    </div>
+    <div style="font-size: 12px; font-weight: bold; margin-top: 4px;">Historial de Vueltas Registradas (3)</div>
+    <div class="laps-container">
+      <div class="lap-row">
+        <div style="display:flex; align-items:center; gap:8px;">
+          <div class="lap-num">#3</div>
+          <div class="lap-time">Vuelta: 00:08.7</div>
+        </div>
+        <div class="lap-total">Total: 00:28.4</div>
+      </div>
+      <div class="lap-row">
+        <div style="display:flex; align-items:center; gap:8px;">
+          <div class="lap-num">#2</div>
+          <div class="lap-time">Vuelta: 00:13.4</div>
+        </div>
+        <div class="lap-total">Total: 00:19.7</div>
+      </div>
+      <div class="lap-row">
+        <div style="display:flex; align-items:center; gap:8px;">
+          <div class="lap-num">#1</div>
+          <div class="lap-time">Vuelta: 00:06.3</div>
+        </div>
+        <div class="lap-total">Total: 00:06.3</div>
+      </div>
+    </div>
+    
+    
+  </div>
+  <div class="nav-bar">
+    <div class="nav-item nav-item-active">
+      <span>⚡</span>
+      <span>Taller 2: Segundo Plano</span>
+    </div>
+    <div class="nav-item">
+      <span>📱</span>
+      <span>Taller 1: Widgets</span>
+    </div>
+  </div>
+</div>
+</body>
+</html>

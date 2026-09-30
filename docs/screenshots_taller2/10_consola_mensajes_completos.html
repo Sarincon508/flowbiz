@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<style>
+  body {
+    background: #0B0F19;
+    padding: 20px;
+    font-family: "Courier New", Courier, monospace;
+    color: #E2E8F0;
+    font-size: 11px;
+    line-height: 1.5;
+  }
+  .terminal-box {
+    background: #030712;
+    border: 1px solid #1F2937;
+    border-radius: 12px;
+    padding: 18px;
+    box-shadow: 0 20px 40px rgba(0,0,0,0.6);
+  }
+  .header {
+    border-bottom: 1px solid #1F2937;
+    padding-bottom: 10px;
+    margin-bottom: 12px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    color: #9CA3AF;
+  }
+  .dots { display: flex; gap: 6px; }
+  .dot { width: 10px; height: 10px; border-radius: 50%; }
+  .red { background: #EF4444; }
+  .yellow { background: #F59E0B; }
+  .green { background: #10B981; }
+  .c-yellow { color: #FBBF24; font-weight: bold; }
+  .c-purple { color: #C084FC; font-weight: bold; }
+  .c-green { color: #4ADE80; font-weight: bold; }
+  .c-red { color: #F87171; font-weight: bold; }
+  .c-blue { color: #38BDF8; font-weight: bold; }
+  .c-cyan { color: #22D3EE; }
+  .c-gray { color: #64748B; }
+  .sec-tag {
+    background: #1E293B;
+    padding: 2px 8px;
+    border-radius: 4px;
+    margin: 8px 0 4px 0;
+    display: inline-block;
+    color: #93C5FD;
+    font-weight: bold;
+  }
+</style>
+</head>
+<body>
+<div class="terminal-box">
+  <div class="header">
+    <div class="dots">
+      <div class="dot red"></div>
+      <div class="dot yellow"></div>
+      <div class="dot green"></div>
+    </div>
+    <div>Terminal de Depuración Flutter — UCEVA | Samuel Rincon (230231045)</div>
+    <div class="c-gray">dart:async & dart:isolate</div>
+  </div>
+
+  <div class="sec-tag">=== SECCIÓN 1: SECUENCIA DE ASINCRONÍA (FUTURE / ASYNC / AWAIT) ===</div>
+  <div><span class="c-yellow">[ASYNC-ORDER] 1. [ANTES]:</span> Invocando fetchReportData(). La UI permanece libre e interactiva (Event Loop no bloqueado).</div>
+  <div><span class="c-purple">[ASYNC-ORDER] 2. [DURANTE]:</span> Esperando respuesta del servidor simulado mediante Future.delayed(2500 ms)...</div>
+  <div><span class="c-cyan">[ASYNC-UI-TEST]</span> Usuario presionó botón reactivo mientras esperaba. Contador de toques: 8 clicks recibidos a 60 FPS.</div>
+  <div><span class="c-green">[ASYNC-ORDER] 3. [DESPUÉS - ÉXITO]:</span> Respuesta recibida en 2514 ms. Datos parseados exitosamente. Actualizando estado en UI.</div>
+  <div class="c-gray">--- Simulación de Fallo con Excepción Controlada ---</div>
+  <div><span class="c-yellow">[ASYNC-ORDER] 1. [ANTES]:</span> Invocando fetchReportData(simulateError: true)...</div>
+  <div><span class="c-purple">[ASYNC-ORDER] 2. [DURANTE]:</span> Esperando respuesta del servidor simulado con Future.delayed(2500 ms)...</div>
+  <div><span class="c-red">[ASYNC-ORDER] 3. [DESPUÉS - ERROR]:</span> Fallo capturado en bloque catch tras 2504 ms: Exception: Error 503 (Servicio no disponible).</div>
+
+  <div class="sec-tag">=== SECCIÓN 2: CICLO DE VIDA DEL TIMER (CRONÓMETRO) ===</div>
+  <div><span class="c-green">[Timer]</span> Timer iniciado a una frecuencia de 100ms. Estado: TimerStatus.running</div>
+  <div><span class="c-yellow">[Timer]</span> Vuelta registrada #1: 00:06.3 (Total: 00:06.3)</div>
+  <div><span class="c-yellow">[Timer]</span> Vuelta registrada #2: 00:13.4 (Total: 00:19.7)</div>
+  <div><span class="c-yellow">[Timer]</span> Timer pausado. Tiempo retenido: 00:28.4 (Timer.cancel() ejecutado)</div>
+  <div><span class="c-green">[Timer]</span> Timer reanudado desde: 00:28.4</div>
+  <div><span class="c-red">[Timer]</span> Timer reiniciado a estado inicial. Acumuladores restablecidos a 0.</div>
+
+  <div class="sec-tag">=== SECCIÓN 3: COMUNICACIÓN INTER-HILOS CON ISOLATE.SPAWN ===</div>
+  <div><span class="c-blue">[ISOLATE-MAIN] 1. [Main Thread]:</span> Creando ReceivePort para comunicación bidireccional.</div>
+  <div><span class="c-blue">[ISOLATE-MAIN] 2. [Main Thread]:</span> Invocando Isolate.spawn() para crear un nuevo hilo de ejecución independiente...</div>
+  <div><span class="c-green">[ISOLATE-MAIN] 3. [Main Thread]:</span> Isolate creado y activo. La interfaz (UI) continúa corriendo a 60 FPS sin bloqueos.</div>
+  <div><span class="c-cyan">[ISOLATE-WORKER] 1.</span> Hilo secundario Isolate iniciado con su propio espacio de memoria (Heap separado).</div>
+  <div><span class="c-cyan">[ISOLATE-WORKER] 2.</span> Comenzando computación CPU-bound de 30,000,000 iteraciones (Sumatoria + Primos)...</div>
+  <div><span class="c-purple">[ISOLATE-WORKER]</span> Progreso de cómputo emitido: 25% (7,500,000/30,000,000 operaciones)</div>
+  <div><span class="c-purple">[ISOLATE-WORKER]</span> Progreso de cómputo emitido: 50% (15,000,000/30,000,000 operaciones)</div>
+  <div><span class="c-purple">[ISOLATE-WORKER]</span> Progreso de cómputo emitido: 75% (22,500,000/30,000,000 operaciones)</div>
+  <div><span class="c-green">[ISOLATE-WORKER] 3.</span> Cómputo CPU finalizado en 1782 ms. Enviando resultado final al ReceivePort del hilo principal...</div>
+  <div><span class="c-green">[ISOLATE-MAIN] 4. [Main Thread]:</span> Cómputo recibido satisfactoriamente (Suma: 450000015000000, Primos: 13848, Tiempo: 1782ms).</div>
+  <div><span class="c-blue">[ISOLATE-MAIN] 5.</span> Recursos de Isolate y ReceivePort liberados.</div>
+  <div><span class="c-green">[LIFECYCLE]</span> Recursos de Timer e Isolate liberados exitosamente en dispose().</div>
+</div>
+</body>
+</html>
